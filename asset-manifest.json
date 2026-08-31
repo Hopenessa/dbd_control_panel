@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/dbd_control_panel/static/css/main.6086fb1f.css",
-    "main.js": "/dbd_control_panel/static/js/main.e13191e2.js",
+    "main.js": "/dbd_control_panel/static/js/main.d385a91d.js",
     "static/js/453.a3b3f43d.chunk.js": "/dbd_control_panel/static/js/453.a3b3f43d.chunk.js",
     "static/media/TheJudgment_Portrait.webp": "/dbd_control_panel/static/media/TheJudgment_Portrait.00508397b6987a75686d.webp",
     "static/media/AuroraStardotter_Portrait.webp": "/dbd_control_panel/static/media/AuroraStardotter_Portrait.19f471dfe28cf8a5b0e8.webp",
@@ -97,11 +97,11 @@
     "static/media/NeaKarlsson_Portrait.webp": "/dbd_control_panel/static/media/NeaKarlsson_Portrait.1b95b6cde4a824f69585.webp",
     "index.html": "/dbd_control_panel/index.html",
     "main.6086fb1f.css.map": "/dbd_control_panel/static/css/main.6086fb1f.css.map",
-    "main.e13191e2.js.map": "/dbd_control_panel/static/js/main.e13191e2.js.map",
+    "main.d385a91d.js.map": "/dbd_control_panel/static/js/main.d385a91d.js.map",
     "453.a3b3f43d.chunk.js.map": "/dbd_control_panel/static/js/453.a3b3f43d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.6086fb1f.css",
-    "static/js/main.e13191e2.js"
+    "static/js/main.d385a91d.js"
   ]
 }
