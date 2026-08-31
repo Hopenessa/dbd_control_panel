@@ -2,8 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders streamer queue controls', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  expect(screen.getByRole('heading', { name: /очередь заказов/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /рандомный киллер/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /рандомный сурв/i })).toBeInTheDocument();
 });
