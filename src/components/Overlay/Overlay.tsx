@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useAppSocket } from '../../hooks/useAppSocket';
 import { useCharacterRosters } from '../../hooks/useCharacterRosters';
 import { useSyncedQueue } from '../../hooks/useSyncedQueue';
 import { SpinEvent } from '../../types/dbd';
@@ -10,10 +11,35 @@ export function Overlay() {
   const [spinEvent, setSpinEvent] = useState<SpinEvent | null>(null);
   const [winnerVisible, setWinnerVisible] = useState(false);
   const { rosters } = useCharacterRosters();
+  const handledSpinIds = useRef(new Set<string>());
 
   const wheelCharacters = spinEvent
     ? rosters[spinEvent.type].filter((character) => character.enabled !== false)
     : [];
+
+  const showSpin = (nextSpinEvent: SpinEvent) => {
+    if (handledSpinIds.current.has(nextSpinEvent.id)) {
+      return;
+    }
+
+    handledSpinIds.current.add(nextSpinEvent.id);
+    setWinnerVisible(false);
+    setSpinEvent(nextSpinEvent);
+
+    window.setTimeout(() => setWinnerVisible(true), 4200);
+    window.setTimeout(() => {
+      setSpinEvent((currentEvent) =>
+        currentEvent?.id === nextSpinEvent.id ? null : currentEvent,
+      );
+      setWinnerVisible(false);
+    }, 8200);
+  };
+
+  useAppSocket((message) => {
+    if (message.type === 'spin') {
+      showSpin(message.spin);
+    }
+  });
 
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
@@ -21,17 +47,7 @@ export function Overlay() {
         return;
       }
 
-      const nextSpinEvent = JSON.parse(event.newValue) as SpinEvent;
-      setWinnerVisible(false);
-      setSpinEvent(nextSpinEvent);
-
-      window.setTimeout(() => setWinnerVisible(true), 4200);
-      window.setTimeout(() => {
-        setSpinEvent((currentEvent) =>
-          currentEvent?.id === nextSpinEvent.id ? null : currentEvent,
-        );
-        setWinnerVisible(false);
-      }, 8200);
+      showSpin(JSON.parse(event.newValue) as SpinEvent);
     };
 
     window.addEventListener('storage', handleStorage);

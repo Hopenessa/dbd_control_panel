@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { useCharacterRosters } from '../../hooks/useCharacterRosters';
+import { useAppSocket } from '../../hooks/useAppSocket';
 import { useSyncedQueue } from '../../hooks/useSyncedQueue';
 import { CharacterType, QueueItem, SpinEvent } from '../../types/dbd';
 import { pickRandomCharacter } from '../../utils/characters';
@@ -13,6 +14,7 @@ export function ControlPanel() {
   const [lowPriority, setLowPriority] = useState(false);
   const [settingsType, setSettingsType] = useState<CharacterType | null>(null);
   const { rosters, updateRoster } = useCharacterRosters();
+  const { sendMessage } = useAppSocket();
   const appBasePath = window.location.pathname.replace(/\/$/, '');
   const overlayUrl = `${appBasePath}/#/overlay`;
 
@@ -58,6 +60,7 @@ export function ControlPanel() {
     };
 
     window.localStorage.setItem(spinStorageKey, JSON.stringify(spinEvent));
+    sendMessage({ type: 'spin', spin: spinEvent });
 
     window.setTimeout(() => {
       setQueue((currentQueue) =>

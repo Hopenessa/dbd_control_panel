@@ -4,6 +4,19 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+### Локальный запуск для OBS
+
+Для синхронизации панели и оверлея запусти два процесса в отдельных окнах терминала:
+
+```bash
+npm run server
+npm start
+```
+
+Панель открывается на `http://localhost:3000/`, а в OBS добавь Browser Source с адресом `http://localhost:3000/#/overlay`.
+
+WebSocket-сервер работает на порту `3001`. Его окно терминала должно оставаться открытым во время стрима.
+
 In the project directory, you can run:
 
 ### `npm start`
