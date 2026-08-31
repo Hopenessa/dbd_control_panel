@@ -13,7 +13,8 @@ export function ControlPanel() {
   const [lowPriority, setLowPriority] = useState(false);
   const [settingsType, setSettingsType] = useState<CharacterType | null>(null);
   const { rosters, updateRoster } = useCharacterRosters();
-  const overlayUrl = `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}/#/overlay`;
+  const appBasePath = window.location.pathname.replace(/\/$/, '');
+  const overlayUrl = `${appBasePath}/#/overlay`;
 
   const addItem = (title: string, randomType?: CharacterType) => {
     const trimmedTitle = title.trim();
