@@ -38,4 +38,15 @@ server.on('connection', (client) => {
   });
 });
 
-console.log(`DBD WebSocket server is running on ws://localhost:${port}`);
+server.on('listening', () => {
+  console.log(`DBD WebSocket server is running on ws://localhost:${port}`);
+});
+
+server.on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${port} is already in use. The WebSocket server may already be running.`);
+    return;
+  }
+
+  console.error(error);
+});
