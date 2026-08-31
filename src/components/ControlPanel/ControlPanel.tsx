@@ -13,6 +13,7 @@ export function ControlPanel() {
   const [lowPriority, setLowPriority] = useState(false);
   const [settingsType, setSettingsType] = useState<CharacterType | null>(null);
   const { rosters, updateRoster } = useCharacterRosters();
+  const overlayUrl = `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}/#/overlay`;
 
   const addItem = (title: string, randomType?: CharacterType) => {
     const trimmedTitle = title.trim();
@@ -79,7 +80,7 @@ export function ControlPanel() {
           <div className="heading-actions">
             <button className="settings-button" type="button" onClick={() => setSettingsType('survivor')}>Настроить сурвов</button>
             <button className="settings-button" type="button" onClick={() => setSettingsType('killer')}>Настроить маньяков</button>
-            <a className="overlay-link" href="/overlay" target="_blank" rel="noreferrer">Открыть оверлей</a>
+            <a className="overlay-link" href={overlayUrl} target="_blank" rel="noreferrer">Открыть оверлей</a>
           </div>
         </div>
 

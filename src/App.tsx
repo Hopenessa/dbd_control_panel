@@ -3,7 +3,10 @@ import { Overlay } from './components/Overlay/Overlay';
 import './App.css';
 
 function App() {
-  return window.location.pathname === '/overlay' ? <Overlay /> : <ControlPanel />;
+  const isOverlayPath = window.location.pathname.endsWith('/overlay');
+  const isOverlayHash = window.location.hash === '#/overlay';
+
+  return isOverlayPath || isOverlayHash ? <Overlay /> : <ControlPanel />;
 }
 
 export default App;
