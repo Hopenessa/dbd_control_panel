@@ -2,7 +2,7 @@
   "name": "dbd_control_panel",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/Hopenessa/dbd_control_panel.git",
+  "homepage": "https://hopenessa.github.io/dbd_control_panel/",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
