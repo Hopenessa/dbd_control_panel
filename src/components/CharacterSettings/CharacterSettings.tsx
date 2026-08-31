@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Character } from '../../types/dbd';
+import { resolvePortraitUrl } from '../../utils/portraits';
 
 type CharacterSettingsProps = {
   type: 'killer' | 'survivor';
@@ -68,7 +69,7 @@ export function CharacterSettings({ type, characters, onUpdate, onClose }: Chara
         <div className="character-settings-list">
           {characters.map((character, index) => (
             <div className="character-setting" key={`${character.name}-${index}`}>
-              {character.portrait ? <img className="settings-portrait" src={character.portrait} alt="" /> : <span className="settings-portrait">?</span>}
+              {character.portrait ? <img className="settings-portrait" src={resolvePortraitUrl(character.portrait)} alt="" /> : <span className="settings-portrait">?</span>}
               <div className="character-fields">
                 <input
                   aria-label={`Имя персонажа ${index + 1}`}

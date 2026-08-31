@@ -1,5 +1,6 @@
 import { Character } from '../../types/dbd';
 import { getInitials } from '../../utils/characters';
+import { resolvePortraitUrl } from '../../utils/portraits';
 import { describeArc, polarToCartesian } from './geometry';
 
 type WheelSliceProps = {
@@ -31,7 +32,7 @@ export function WheelSlice({ character, index, total }: WheelSliceProps) {
         <circle r="25" fill="#f8fafc" />
         {character.portrait ? (
           <image
-            href={character.portrait}
+            href={resolvePortraitUrl(character.portrait)}
             x="-21"
             y="-21"
             width="42"

@@ -1,5 +1,6 @@
 import { Character } from '../../types/dbd';
 import { getInitials } from '../../utils/characters';
+import { resolvePortraitUrl } from '../../utils/portraits';
 
 type PortraitProps = {
   character: Character;
@@ -13,7 +14,7 @@ export function Portrait({ character, large = false }: PortraitProps) {
     return (
       <img
         className={className}
-        src={character.portrait}
+        src={resolvePortraitUrl(character.portrait)}
         alt={character.name}
         style={{ backgroundColor: character.color }}
       />
