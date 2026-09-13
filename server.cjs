@@ -1,7 +1,25 @@
 const WebSocket = require('ws');
+const fs = require('fs');
+const path = require('path');
 
-const port = Number(process.env.SOCKET_PORT || 3001);
-let queue = null;
+const port = Number(process.env.PORT || process.env.SOCKET_PORT || 3001);
+const queueFile = path.join(__dirname, 'data', 'queue.json');
+
+function loadQueue() {
+  try {
+    const savedQueue = JSON.parse(fs.readFileSync(queueFile, 'utf8'));
+    return Array.isArray(savedQueue) ? savedQueue : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveQueue(nextQueue) {
+  fs.mkdirSync(path.dirname(queueFile), { recursive: true });
+  fs.writeFileSync(queueFile, JSON.stringify(nextQueue, null, 2), 'utf8');
+}
+
+let queue = loadQueue();
 const server = new WebSocket.Server({ port });
 
 function send(client, message) {
@@ -20,12 +38,12 @@ server.on('connection', (client) => {
       const message = JSON.parse(rawMessage.toString());
 
       if (message.type === 'queue:sync') {
-        if (!queue) queue = Array.isArray(message.queue) ? message.queue : [];
         send(client, { type: 'queue:update', queue });
       }
 
       if (message.type === 'queue:update' && Array.isArray(message.queue)) {
         queue = message.queue;
+        saveQueue(queue);
         broadcast({ type: 'queue:update', queue });
       }
 
