@@ -5,6 +5,7 @@ import { useSyncedQueue } from '../../hooks/useSyncedQueue';
 import { CharacterType, QueueItem, SpinEvent } from '../../types/dbd';
 import { pickRandomCharacter } from '../../utils/characters';
 import { createQueueItem, insertByPriority } from '../../utils/queue';
+import { createId } from '../../utils/id';
 import { spinStorageKey } from '../../utils/storageKeys';
 import { CharacterSettings } from '../CharacterSettings/CharacterSettings';
 
@@ -52,7 +53,7 @@ export function ControlPanel() {
 
     const { winner, winnerIndex } = result;
     const spinEvent: SpinEvent = {
-      id: crypto.randomUUID(),
+      id: createId(),
       itemId: item.id,
       type: item.randomType,
       winner,

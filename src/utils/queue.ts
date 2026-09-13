@@ -1,4 +1,5 @@
 import { CharacterType, QueueItem } from '../types/dbd';
+import { createId } from './id';
 
 export function createQueueItem(
   title: string,
@@ -6,7 +7,7 @@ export function createQueueItem(
   randomType?: CharacterType,
 ): QueueItem {
   return {
-    id: `${Date.now()}-${crypto.randomUUID()}`,
+    id: createId(),
     title,
     lowPriority,
     randomType,
