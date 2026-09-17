@@ -115,11 +115,12 @@ h1 {
 }
 
 .overlay-link {
-  background: var(--accent);
+  background: #4ade80;
+  color: #052e16;
 }
 
 .overlay-link:hover {
-  background: var(--accent-hot);
+  background: #86efac;
 }
 
 .composer {
