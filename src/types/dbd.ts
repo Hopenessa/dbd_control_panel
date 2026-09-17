@@ -22,3 +22,17 @@ export type SpinEvent = {
   winner: Character;
   winnerIndex: number;
 };
+
+export type OverlayConfig = {
+  queue: {
+    x: number;
+    y: number;
+    scale: number;
+    fontSize: number;
+  };
+  wheel: {
+    x: number;
+    y: number;
+    scale: number;
+  };
+};

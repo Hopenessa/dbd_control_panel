@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { useAppSocket } from '../../hooks/useAppSocket';
 import { useCharacterRosters } from '../../hooks/useCharacterRosters';
+import { useOverlayConfig } from '../../hooks/useOverlayConfig';
 import { useSyncedQueue } from '../../hooks/useSyncedQueue';
 import { SpinEvent } from '../../types/dbd';
 import { spinStorageKey } from '../../utils/storageKeys';
@@ -11,6 +12,7 @@ export function Overlay() {
   const [spinEvent, setSpinEvent] = useState<SpinEvent | null>(null);
   const [winnerVisible, setWinnerVisible] = useState(false);
   const { rosters } = useCharacterRosters();
+  const { config } = useOverlayConfig();
   const handledSpinIds = useRef(new Set<string>());
 
   const wheelCharacters = spinEvent
@@ -55,7 +57,18 @@ export function Overlay() {
   }, []);
 
   return (
-    <main className="overlay-stage">
+    <main
+      className="overlay-stage"
+      style={{
+        '--queue-x': `${config.queue.x}px`,
+        '--queue-y': `${config.queue.y}px`,
+        '--queue-scale': config.queue.scale,
+        '--queue-font-size': `${config.queue.fontSize}px`,
+        '--wheel-x': `${config.wheel.x}px`,
+        '--wheel-y': `${config.wheel.y}px`,
+        '--wheel-scale': config.wheel.scale,
+      } as CSSProperties}
+    >
       <ol className="overlay-queue">
         {queue.map((item) => (
           <li key={item.id}>{item.title}</li>

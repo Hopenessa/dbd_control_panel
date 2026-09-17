@@ -1,0 +1,6 @@
+import { OverlayConfig } from '../types/dbd';
+
+export const defaultOverlayConfig: OverlayConfig = {
+  queue: { x: 56, y: 46, scale: 1, fontSize: 34 },
+  wheel: { x: 0, y: 0, scale: 1 },
+};

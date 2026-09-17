@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { useCharacterRosters } from '../../hooks/useCharacterRosters';
 import { useAppSocket } from '../../hooks/useAppSocket';
+import { useOverlayConfig } from '../../hooks/useOverlayConfig';
 import { useSyncedQueue } from '../../hooks/useSyncedQueue';
 import { CharacterType, QueueItem, SpinEvent } from '../../types/dbd';
 import { pickRandomCharacter } from '../../utils/characters';
@@ -8,13 +9,16 @@ import { createQueueItem, insertByPriority } from '../../utils/queue';
 import { createId } from '../../utils/id';
 import { spinStorageKey } from '../../utils/storageKeys';
 import { CharacterSettings } from '../CharacterSettings/CharacterSettings';
+import { OverlaySettings } from '../OverlaySettings/OverlaySettings';
 
 export function ControlPanel() {
   const [queue, setQueue] = useSyncedQueue();
   const [inputValue, setInputValue] = useState('');
   const [lowPriority, setLowPriority] = useState(false);
   const [settingsType, setSettingsType] = useState<CharacterType | null>(null);
+  const [overlaySettingsOpen, setOverlaySettingsOpen] = useState(false);
   const { rosters, updateRoster } = useCharacterRosters();
+  const { config, saveConfig } = useOverlayConfig();
   const { sendMessage } = useAppSocket();
   const appBasePath = window.location.pathname.replace(/\/$/, '');
   const overlayUrl = `${appBasePath}/#/overlay`;
@@ -85,6 +89,7 @@ export function ControlPanel() {
           <div className="heading-actions">
             <button className="settings-button" type="button" onClick={() => setSettingsType('survivor')}>Настроить сурвов</button>
             <button className="settings-button" type="button" onClick={() => setSettingsType('killer')}>Настроить маньяков</button>
+            <button className="settings-button" type="button" onClick={() => setOverlaySettingsOpen(true)}>Настроить оверлей</button>
             <a className="overlay-link" href={overlayUrl} target="_blank" rel="noreferrer">Открыть оверлей</a>
           </div>
         </div>
@@ -148,6 +153,14 @@ export function ControlPanel() {
           characters={rosters[settingsType]}
           onUpdate={(characters) => updateRoster(settingsType, characters)}
           onClose={() => setSettingsType(null)}
+        />
+      )}
+      {overlaySettingsOpen && (
+        <OverlaySettings
+          config={config}
+          queue={queue}
+          onSave={saveConfig}
+          onClose={() => setOverlaySettingsOpen(false)}
         />
       )}
     </main>
