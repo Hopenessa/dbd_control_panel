@@ -18,9 +18,11 @@ export function useSyncedQueue(): readonly [
 ] {
   const [queue, setQueue] = useState<QueueItem[]>(loadQueue);
   const lastServerQueue = useRef<string | null>(null);
+  const hasLoadedServerQueue = useRef(false);
   const { isConnected, sendMessage } = useAppSocket((message) => {
     if (message.type === 'queue:update') {
       lastServerQueue.current = JSON.stringify(message.queue);
+      hasLoadedServerQueue.current = true;
       setQueue(message.queue);
       window.localStorage.setItem(queueStorageKey, JSON.stringify(message.queue));
     }
@@ -32,6 +34,16 @@ export function useSyncedQueue(): readonly [
 
   useEffect(() => {
     if (!isConnected) {
+      hasLoadedServerQueue.current = false;
+      return;
+    }
+
+    hasLoadedServerQueue.current = false;
+    sendMessage({ type: 'queue:sync', queue: [] });
+  }, [isConnected, sendMessage]);
+
+  useEffect(() => {
+    if (!isConnected || !hasLoadedServerQueue.current) {
       return;
     }
 
