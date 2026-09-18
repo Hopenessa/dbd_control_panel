@@ -80,7 +80,7 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
             onMouseDown={(event) => startDrag('pausedQueue', event)}
           >
             <strong>На паузе</strong>
-            <ol className="preview-queue preview-paused-queue">
+            <ol className="preview-queue preview-paused-queue" style={{ fontSize: `${draft.pausedQueue.fontSize / 2}px` }}>
               {(pausedQueue.length ? pausedQueue : [{ id: 'paused-preview', title: 'Пример паузы', lowPriority: false }]).slice(0, 3).map((item) => <li key={item.id}>{item.title}</li>)}
             </ol>
           </div>
@@ -106,7 +106,7 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
           </div>
           <div className="overlay-control-group">
             <h3>Колесо рандомайзера</h3>
-            <label>Масштаб: {draft.wheel.scale.toFixed(1)}<input type="range" min="0.4" max="1.6" step="0.1" value={draft.wheel.scale} onChange={(event) => updateWheel({ scale: Number(event.target.value) })} /></label>
+            <label>Масштаб: {draft.wheel.scale.toFixed(1)}<input type="range" min="0.4" max="1.9" step="0.1" value={draft.wheel.scale} onChange={(event) => updateWheel({ scale: Number(event.target.value) })} /></label>
           </div>
         </div>
 

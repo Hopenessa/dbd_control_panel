@@ -750,7 +750,7 @@ h1 {
 }
 
 .preview-paused-queue li {
-  font-size: 13px;
+  font-size: inherit;
 }
 
 .preview-wheel::after {
