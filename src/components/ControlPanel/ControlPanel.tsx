@@ -1,11 +1,11 @@
-import { FormEvent, useState } from 'react';
+import { DragEvent, FormEvent, useState } from 'react';
 import { useCharacterRosters } from '../../hooks/useCharacterRosters';
 import { useAppSocket } from '../../hooks/useAppSocket';
 import { useOverlayConfig } from '../../hooks/useOverlayConfig';
 import { useSyncedQueue } from '../../hooks/useSyncedQueue';
 import { CharacterType, QueueItem, SpinEvent } from '../../types/dbd';
 import { pickRandomCharacter } from '../../utils/characters';
-import { createQueueItem, insertByPriority } from '../../utils/queue';
+import { createQueueItem, insertByPriority, moveQueueItem } from '../../utils/queue';
 import { createId } from '../../utils/id';
 import { spinStorageKey } from '../../utils/storageKeys';
 import { CharacterSettings } from '../CharacterSettings/CharacterSettings';
@@ -17,6 +17,9 @@ export function ControlPanel() {
   const [lowPriority, setLowPriority] = useState(false);
   const [settingsType, setSettingsType] = useState<CharacterType | null>(null);
   const [overlaySettingsOpen, setOverlaySettingsOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
+  const [draggedId, setDraggedId] = useState<string | null>(null);
   const { rosters, updateRoster } = useCharacterRosters();
   const { config, saveConfig } = useOverlayConfig();
   const { sendMessage } = useAppSocket();
@@ -44,6 +47,121 @@ export function ControlPanel() {
   const removeItem = (id: string) => {
     setQueue((currentQueue) => currentQueue.filter((queueItem) => queueItem.id !== id));
   };
+
+  const startEditing = (item: QueueItem) => {
+    setEditingId(item.id);
+    setEditingTitle(item.title);
+  };
+
+  const saveEditing = () => {
+    const trimmedTitle = editingTitle.trim();
+
+    if (!editingId || !trimmedTitle) {
+      return;
+    }
+
+    setQueue((currentQueue) => currentQueue.map((item) => (
+      item.id === editingId ? { ...item, title: trimmedTitle } : item
+    )));
+    setEditingId(null);
+  };
+
+  const togglePaused = (id: string) => {
+    setQueue((currentQueue) => {
+      const item = currentQueue.find((queueItem) => queueItem.id === id);
+      if (!item) {
+        return currentQueue;
+      }
+
+      if (item.paused) {
+        return insertByPriority(
+          currentQueue.filter((queueItem) => queueItem.id !== id),
+          { ...item, paused: false },
+        );
+      }
+
+      return [
+        ...currentQueue.filter((queueItem) => queueItem.id !== id),
+        { ...item, paused: true },
+      ];
+    });
+  };
+
+  const handleDragStart = (event: DragEvent<HTMLSpanElement>, id: string) => {
+    setDraggedId(id);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', id);
+  };
+
+  const handleDrop = (event: DragEvent<HTMLLIElement>, targetId: string) => {
+    event.preventDefault();
+    const sourceId = draggedId || event.dataTransfer.getData('text/plain');
+    if (sourceId) {
+      setQueue((currentQueue) => moveQueueItem(currentQueue, sourceId, targetId));
+    }
+    setDraggedId(null);
+  };
+
+  const renderQueueItem = (item: QueueItem) => (
+    <li
+      className={item.paused ? 'queue-card paused' : item.lowPriority ? 'queue-card low' : 'queue-card'}
+      key={item.id}
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={(event) => handleDrop(event, item.id)}
+    >
+      <span
+        className="drag-handle"
+        draggable
+        title="Перетащить заказ"
+        aria-label={`Перетащить ${item.title}`}
+        onDragStart={(event) => handleDragStart(event, item.id)}
+        onDragEnd={() => setDraggedId(null)}
+      >
+        ⋮⋮
+      </span>
+      {editingId === item.id ? (
+        <div className="queue-edit-row">
+          <input
+            aria-label="Новое название заказа"
+            value={editingTitle}
+            onChange={(event) => setEditingTitle(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') saveEditing();
+              if (event.key === 'Escape') setEditingId(null);
+            }}
+            autoFocus
+          />
+          <button type="button" onClick={saveEditing}>Сохранить</button>
+          <button type="button" onClick={() => setEditingId(null)}>Отмена</button>
+        </div>
+      ) : (
+        <span className="queue-title">
+          {item.title}
+          {item.paused && <small>На паузе</small>}
+        </span>
+      )}
+      <div className="item-actions">
+        {!editingId && item.randomType && !item.paused && (
+          <button
+            className="icon-button"
+            type="button"
+            aria-label={`Запустить ${item.title}`}
+            title={`Запустить ${item.title}`}
+            onClick={() => playRandom(item)}
+          >
+            ▶
+          </button>
+        )}
+        {!editingId && (
+          <>
+            <button className="icon-button" type="button" onClick={() => startEditing(item)} title="Редактировать" aria-label="Редактировать">✎</button>
+            <button className="icon-button" type="button" onClick={() => togglePaused(item.id)} title={item.paused ? 'Продолжить' : 'Поставить на паузу'} aria-label={item.paused ? 'Продолжить' : 'Поставить на паузу'}>{item.paused ? '▶' : 'Ⅱ'}</button>
+            <button type="button" onClick={() => removeItem(item.id)}>Выполнено / удалить</button>
+          </>
+        )}
+      </div>
+    </li>
+  );
 
   const playRandom = (item: QueueItem) => {
     if (!item.randomType) {
@@ -122,28 +240,17 @@ export function ControlPanel() {
         </div>
 
         <ol className="queue-list">
-          {queue.map((item) => (
-            <li className={item.lowPriority ? 'queue-card low' : 'queue-card'} key={item.id}>
-              <span className="queue-title">{item.title}</span>
-              <div className="item-actions">
-                {item.randomType && (
-                  <button
-                    className="icon-button"
-                    type="button"
-                    aria-label={`Запустить ${item.title}`}
-                    title={`Запустить ${item.title}`}
-                    onClick={() => playRandom(item)}
-                  >
-                    ▶
-                  </button>
-                )}
-                <button type="button" onClick={() => removeItem(item.id)}>
-                  Выполнено / удалить
-                </button>
-              </div>
-            </li>
-          ))}
+          {queue.filter((item) => !item.paused).map(renderQueueItem)}
         </ol>
+
+        {queue.some((item) => item.paused) && (
+          <>
+            <h2 className="paused-heading">Заказы на паузе</h2>
+            <ol className="queue-list paused-list">
+              {queue.filter((item) => item.paused).map(renderQueueItem)}
+            </ol>
+          </>
+        )}
 
         {queue.length === 0 && <p className="empty-state">Очередь пуста</p>}
       </section>

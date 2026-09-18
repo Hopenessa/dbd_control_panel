@@ -12,6 +12,7 @@ export type QueueItem = {
   id: string;
   title: string;
   lowPriority: boolean;
+  paused?: boolean;
   randomType?: CharacterType;
 };
 

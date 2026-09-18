@@ -70,7 +70,7 @@ export function Overlay() {
       } as CSSProperties}
     >
       <ol className="overlay-queue">
-        {queue.map((item) => (
+        {queue.filter((item) => !item.paused).map((item) => (
           <li key={item.id}>{item.title}</li>
         ))}
       </ol>

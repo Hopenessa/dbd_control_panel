@@ -194,9 +194,13 @@ h1 {
   counter-increment: queue;
   display: grid;
   gap: 14px;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   min-height: 64px;
   padding: 12px 14px;
+}
+
+.queue-card.paused {
+  opacity: 0.52;
 }
 
 .queue-card.low {
@@ -210,6 +214,55 @@ h1 {
   font-weight: 800;
   gap: 12px;
   min-width: 0;
+}
+
+.queue-title small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.drag-handle {
+  color: var(--muted);
+  cursor: grab;
+  font-size: 22px;
+  letter-spacing: -5px;
+  line-height: 1;
+  user-select: none;
+  width: 22px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.queue-edit-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.queue-edit-row input {
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  min-height: 42px;
+  min-width: 220px;
+  padding: 0 12px;
+}
+
+.paused-heading {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 24px 0 10px;
+}
+
+.paused-list {
+  opacity: 0.9;
 }
 
 .queue-title::before {
