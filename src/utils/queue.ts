@@ -36,7 +36,7 @@ export function insertByPriority(queue: QueueItem[], item: QueueItem) {
   ];
 }
 
-export function moveQueueItem(queue: QueueItem[], draggedId: string, targetId: string) {
+export function moveQueueItem(queue: QueueItem[], draggedId: string, targetId: string, placeAfter = false) {
   if (draggedId === targetId) {
     return queue;
   }
@@ -52,7 +52,7 @@ export function moveQueueItem(queue: QueueItem[], draggedId: string, targetId: s
   const otherItems = queue.filter((item) => Boolean(item.paused) !== Boolean(draggedItem.paused));
   const withoutDragged = group.filter((item) => item.id !== draggedId);
   const targetIndex = withoutDragged.findIndex((item) => item.id === targetId);
-  withoutDragged.splice(targetIndex, 0, draggedItem);
+  withoutDragged.splice(targetIndex + (placeAfter ? 1 : 0), 0, draggedItem);
 
   return draggedItem.paused ? [...otherItems, ...withoutDragged] : [...withoutDragged, ...otherItems];
 }

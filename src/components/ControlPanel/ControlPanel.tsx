@@ -100,8 +100,10 @@ export function ControlPanel() {
   const handleDrop = (event: DragEvent<HTMLLIElement>, targetId: string) => {
     event.preventDefault();
     const sourceId = draggedIdRef.current || draggedId || event.dataTransfer.getData('text/plain');
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const placeAfter = event.clientY > bounds.top + bounds.height / 2;
     if (sourceId) {
-      setQueue((currentQueue) => moveQueueItem(currentQueue, sourceId, targetId));
+      setQueue((currentQueue) => moveQueueItem(currentQueue, sourceId, targetId, placeAfter));
     }
     draggedIdRef.current = null;
     setDraggedId(null);
