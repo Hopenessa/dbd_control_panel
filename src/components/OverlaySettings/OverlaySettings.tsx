@@ -14,6 +14,8 @@ const previewWidth = 1920;
 const previewHeight = 1080;
 
 export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySettingsProps) {
+  const activeQueue = queue.filter((item) => !item.paused);
+  const pausedQueue = queue.filter((item) => item.paused);
   const [draft, setDraft] = useState(config);
   const [dragTarget, setDragTarget] = useState<DragTarget>(null);
   const dragStart = useRef({ x: 0, y: 0, configX: 0, configY: 0 });
@@ -70,7 +72,7 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
             style={{ left: `${draft.queue.x / previewWidth * 100}%`, top: `${draft.queue.y / previewHeight * 100}%`, fontSize: `${draft.queue.fontSize / 2}px`, transform: `scale(${draft.queue.scale})` }}
             onMouseDown={(event) => startDrag('queue', event)}
           >
-            {(queue.length ? queue : [{ id: 'preview', title: 'Пример элемента', lowPriority: false }]).slice(0, 5).map((item) => <li key={item.id}>{item.title}</li>)}
+            {(activeQueue.length ? activeQueue : [{ id: 'preview', title: 'Пример активного заказа', lowPriority: false }]).slice(0, 5).map((item) => <li key={item.id}>{item.title}</li>)}
           </ol>
           <div
             className="preview-paused-group"
@@ -79,7 +81,7 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
           >
             <strong>На паузе</strong>
             <ol className="preview-queue preview-paused-queue">
-              {(queue.filter((item) => item.paused).length ? queue.filter((item) => item.paused) : [{ id: 'paused-preview', title: 'Пример паузы', lowPriority: false }]).slice(0, 3).map((item) => <li key={item.id}>{item.title}</li>)}
+              {(pausedQueue.length ? pausedQueue : [{ id: 'paused-preview', title: 'Пример паузы', lowPriority: false }]).slice(0, 3).map((item) => <li key={item.id}>{item.title}</li>)}
             </ol>
           </div>
           <div
@@ -92,11 +94,11 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
         </div>
 
         <div className="overlay-controls">
-          <label>Размер шрифта списка: {draft.queue.fontSize}px<input type="range" min="18" max="72" value={draft.queue.fontSize} onChange={(event) => updateQueue({ fontSize: Number(event.target.value) })} /></label>
-          <label>Масштаб списка: {draft.queue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.queue.scale} onChange={(event) => updateQueue({ scale: Number(event.target.value) })} /></label>
-          <label>Размер списка паузы: {draft.pausedQueue.fontSize}px<input type="range" min="14" max="56" value={draft.pausedQueue.fontSize} onChange={(event) => updatePausedQueue({ fontSize: Number(event.target.value) })} /></label>
-          <label>Масштаб списка паузы: {draft.pausedQueue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.pausedQueue.scale} onChange={(event) => updatePausedQueue({ scale: Number(event.target.value) })} /></label>
-          <label>Масштаб колеса: {draft.wheel.scale.toFixed(1)}<input type="range" min="0.4" max="1.6" step="0.1" value={draft.wheel.scale} onChange={(event) => updateWheel({ scale: Number(event.target.value) })} /></label>
+          <label>Размер шрифта активных заказов: {draft.queue.fontSize}px<input type="range" min="18" max="72" value={draft.queue.fontSize} onChange={(event) => updateQueue({ fontSize: Number(event.target.value) })} /></label>
+          <label>Масштаб активных заказов: {draft.queue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.queue.scale} onChange={(event) => updateQueue({ scale: Number(event.target.value) })} /></label>
+          <label>Размер шрифта заказов на паузе: {draft.pausedQueue.fontSize}px<input type="range" min="14" max="56" value={draft.pausedQueue.fontSize} onChange={(event) => updatePausedQueue({ fontSize: Number(event.target.value) })} /></label>
+          <label>Масштаб заказов на паузе: {draft.pausedQueue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.pausedQueue.scale} onChange={(event) => updatePausedQueue({ scale: Number(event.target.value) })} /></label>
+          <label>Масштаб колеса рандомайзера: {draft.wheel.scale.toFixed(1)}<input type="range" min="0.4" max="1.6" step="0.1" value={draft.wheel.scale} onChange={(event) => updateWheel({ scale: Number(event.target.value) })} /></label>
         </div>
 
         <div className="overlay-settings-actions">
