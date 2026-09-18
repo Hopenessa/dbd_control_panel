@@ -31,6 +31,12 @@ export type OverlayConfig = {
     scale: number;
     fontSize: number;
   };
+  pausedQueue: {
+    x: number;
+    y: number;
+    scale: number;
+    fontSize: number;
+  };
   wheel: {
     x: number;
     y: number;

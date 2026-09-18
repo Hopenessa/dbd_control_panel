@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { OverlayConfig } from '../types/dbd';
 import { SocketServerMessage } from '../types/socket';
 import { overlayConfigStorageKey } from '../utils/storageKeys';
-import { defaultOverlayConfig } from '../utils/overlayConfig';
+import { normalizeOverlayConfig } from '../utils/overlayConfig';
 import { useAppSocket } from './useAppSocket';
 
 function loadConfig() {
   try {
     const saved = window.localStorage.getItem(overlayConfigStorageKey);
-    return saved ? (JSON.parse(saved) as OverlayConfig) : defaultOverlayConfig;
+    return saved ? normalizeOverlayConfig(JSON.parse(saved)) : normalizeOverlayConfig();
   } catch {
-    return defaultOverlayConfig;
+    return normalizeOverlayConfig();
   }
 }
 
@@ -20,8 +20,9 @@ export function useOverlayConfig() {
   configRef.current = config;
   const { isConnected, sendMessage } = useAppSocket((message: SocketServerMessage) => {
     if (message.type === 'config:update') {
-      setConfig(message.config);
-      window.localStorage.setItem(overlayConfigStorageKey, JSON.stringify(message.config));
+      const nextConfig = normalizeOverlayConfig(message.config);
+      setConfig(nextConfig);
+      window.localStorage.setItem(overlayConfigStorageKey, JSON.stringify(nextConfig));
     }
   });
 
@@ -32,9 +33,10 @@ export function useOverlayConfig() {
   }, [isConnected, sendMessage]);
 
   const saveConfig = (nextConfig: OverlayConfig) => {
-    setConfig(nextConfig);
-    window.localStorage.setItem(overlayConfigStorageKey, JSON.stringify(nextConfig));
-    sendMessage({ type: 'config:update', config: nextConfig });
+    const normalizedConfig = normalizeOverlayConfig(nextConfig);
+    setConfig(normalizedConfig);
+    window.localStorage.setItem(overlayConfigStorageKey, JSON.stringify(normalizedConfig));
+    sendMessage({ type: 'config:update', config: normalizedConfig });
   };
 
   return { config, saveConfig };

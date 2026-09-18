@@ -349,6 +349,33 @@ h1 {
   text-align: right;
 }
 
+.overlay-paused-group {
+  left: var(--paused-queue-x, 56px);
+  position: absolute;
+  top: var(--paused-queue-y, 360px);
+  transform: scale(var(--paused-queue-scale, 0.82));
+  transform-origin: top left;
+}
+
+.overlay-paused-group h2 {
+  color: rgba(248, 250, 252, 0.72);
+  font-size: var(--paused-queue-font-size, 26px);
+  margin: 0 0 8px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.9), 0 0 3px rgba(0, 0, 0, 0.95);
+}
+
+.overlay-paused-group .overlay-queue {
+  font-size: var(--paused-queue-font-size, 26px);
+  left: auto;
+  position: static;
+  top: auto;
+}
+
+.overlay-paused-group .overlay-queue li {
+  color: rgba(248, 250, 252, 0.72);
+  font-size: var(--paused-queue-font-size, 26px);
+}
+
 .randomizer {
   display: grid;
   height: 100%;
@@ -701,6 +728,29 @@ h1 {
   position: absolute;
   user-select: none;
   width: 240px;
+}
+
+.preview-paused-group {
+  color: rgba(248, 250, 252, 0.72);
+  cursor: move;
+  position: absolute;
+  transform-origin: top left;
+  z-index: 2;
+}
+
+.preview-paused-group strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.preview-paused-group .preview-queue {
+  max-width: none;
+  position: static;
+}
+
+.preview-paused-queue li {
+  font-size: 13px;
 }
 
 .preview-wheel::after {

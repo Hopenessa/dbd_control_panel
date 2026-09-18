@@ -8,7 +8,7 @@ type OverlaySettingsProps = {
   onClose: () => void;
 };
 
-type DragTarget = 'queue' | 'wheel' | null;
+type DragTarget = 'queue' | 'pausedQueue' | 'wheel' | null;
 
 const previewWidth = 1920;
 const previewHeight = 1080;
@@ -21,7 +21,7 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
 
   const startDrag = (target: Exclude<DragTarget, null>, event: MouseEvent) => {
     event.preventDefault();
-    const position = target === 'queue' ? draft.queue : draft.wheel;
+    const position = target === 'queue' ? draft.queue : target === 'pausedQueue' ? draft.pausedQueue : draft.wheel;
     dragStart.current = { x: event.clientX, y: event.clientY, configX: position.x, configY: position.y };
     setDragTarget(target);
   };
@@ -42,6 +42,7 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
 
   const stopDrag = () => setDragTarget(null);
   const updateQueue = (changes: Partial<OverlayConfig['queue']>) => setDraft((current) => ({ ...current, queue: { ...current.queue, ...changes } }));
+  const updatePausedQueue = (changes: Partial<OverlayConfig['pausedQueue']>) => setDraft((current) => ({ ...current, pausedQueue: { ...current.pausedQueue, ...changes } }));
   const updateWheel = (changes: Partial<OverlayConfig['wheel']>) => setDraft((current) => ({ ...current, wheel: { ...current.wheel, ...changes } }));
 
   return (
@@ -72,6 +73,16 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
             {(queue.length ? queue : [{ id: 'preview', title: 'Пример элемента', lowPriority: false }]).slice(0, 5).map((item) => <li key={item.id}>{item.title}</li>)}
           </ol>
           <div
+            className="preview-paused-group"
+            style={{ left: `${draft.pausedQueue.x / previewWidth * 100}%`, top: `${draft.pausedQueue.y / previewHeight * 100}%`, transform: `scale(${draft.pausedQueue.scale})` }}
+            onMouseDown={(event) => startDrag('pausedQueue', event)}
+          >
+            <strong>На паузе</strong>
+            <ol className="preview-queue preview-paused-queue">
+              {(queue.filter((item) => item.paused).length ? queue.filter((item) => item.paused) : [{ id: 'paused-preview', title: 'Пример паузы', lowPriority: false }]).slice(0, 3).map((item) => <li key={item.id}>{item.title}</li>)}
+            </ol>
+          </div>
+          <div
             className="preview-wheel"
             style={{ left: `calc(50% + ${draft.wheel.x / 2}px)`, top: `calc(50% + ${draft.wheel.y / 2}px)`, transform: `translate(-50%, -50%) scale(${draft.wheel.scale})` }}
             onMouseDown={(event) => startDrag('wheel', event)}
@@ -83,6 +94,8 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
         <div className="overlay-controls">
           <label>Размер шрифта списка: {draft.queue.fontSize}px<input type="range" min="18" max="72" value={draft.queue.fontSize} onChange={(event) => updateQueue({ fontSize: Number(event.target.value) })} /></label>
           <label>Масштаб списка: {draft.queue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.queue.scale} onChange={(event) => updateQueue({ scale: Number(event.target.value) })} /></label>
+          <label>Размер списка паузы: {draft.pausedQueue.fontSize}px<input type="range" min="14" max="56" value={draft.pausedQueue.fontSize} onChange={(event) => updatePausedQueue({ fontSize: Number(event.target.value) })} /></label>
+          <label>Масштаб списка паузы: {draft.pausedQueue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.pausedQueue.scale} onChange={(event) => updatePausedQueue({ scale: Number(event.target.value) })} /></label>
           <label>Масштаб колеса: {draft.wheel.scale.toFixed(1)}<input type="range" min="0.4" max="1.6" step="0.1" value={draft.wheel.scale} onChange={(event) => updateWheel({ scale: Number(event.target.value) })} /></label>
         </div>
 

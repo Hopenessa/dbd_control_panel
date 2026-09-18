@@ -64,6 +64,10 @@ export function Overlay() {
         '--queue-y': `${config.queue.y}px`,
         '--queue-scale': config.queue.scale,
         '--queue-font-size': `${config.queue.fontSize}px`,
+        '--paused-queue-x': `${config.pausedQueue.x}px`,
+        '--paused-queue-y': `${config.pausedQueue.y}px`,
+        '--paused-queue-scale': config.pausedQueue.scale,
+        '--paused-queue-font-size': `${config.pausedQueue.fontSize}px`,
         '--wheel-x': `${config.wheel.x}px`,
         '--wheel-y': `${config.wheel.y}px`,
         '--wheel-scale': config.wheel.scale,
@@ -74,6 +78,17 @@ export function Overlay() {
           <li key={item.id}>{item.title}</li>
         ))}
       </ol>
+
+      {queue.some((item) => item.paused) && (
+        <section className="overlay-paused-group" aria-label="Заказы на паузе">
+          <h2>На паузе</h2>
+          <ol className="overlay-queue overlay-paused-queue">
+            {queue.filter((item) => item.paused).map((item) => (
+              <li key={item.id}>{item.title}</li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       {spinEvent && (
         <RandomizerWheel
