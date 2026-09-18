@@ -94,11 +94,20 @@ export function OverlaySettings({ config, queue, onSave, onClose }: OverlaySetti
         </div>
 
         <div className="overlay-controls">
-          <label>Размер шрифта активных заказов: {draft.queue.fontSize}px<input type="range" min="18" max="72" value={draft.queue.fontSize} onChange={(event) => updateQueue({ fontSize: Number(event.target.value) })} /></label>
-          <label>Масштаб активных заказов: {draft.queue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.queue.scale} onChange={(event) => updateQueue({ scale: Number(event.target.value) })} /></label>
-          <label>Размер шрифта заказов на паузе: {draft.pausedQueue.fontSize}px<input type="range" min="14" max="56" value={draft.pausedQueue.fontSize} onChange={(event) => updatePausedQueue({ fontSize: Number(event.target.value) })} /></label>
-          <label>Масштаб заказов на паузе: {draft.pausedQueue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.pausedQueue.scale} onChange={(event) => updatePausedQueue({ scale: Number(event.target.value) })} /></label>
-          <label>Масштаб колеса рандомайзера: {draft.wheel.scale.toFixed(1)}<input type="range" min="0.4" max="1.6" step="0.1" value={draft.wheel.scale} onChange={(event) => updateWheel({ scale: Number(event.target.value) })} /></label>
+          <div className="overlay-control-group">
+            <h3>Активные заказы</h3>
+            <label>Размер шрифта: {draft.queue.fontSize}px<input type="range" min="18" max="72" value={draft.queue.fontSize} onChange={(event) => updateQueue({ fontSize: Number(event.target.value) })} /></label>
+            <label>Масштаб: {draft.queue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.queue.scale} onChange={(event) => updateQueue({ scale: Number(event.target.value) })} /></label>
+          </div>
+          <div className="overlay-control-group">
+            <h3>Заказы на паузе</h3>
+            <label>Размер шрифта: {draft.pausedQueue.fontSize}px<input type="range" min="14" max="56" value={draft.pausedQueue.fontSize} onChange={(event) => updatePausedQueue({ fontSize: Number(event.target.value) })} /></label>
+            <label>Масштаб: {draft.pausedQueue.scale.toFixed(1)}<input type="range" min="0.5" max="2" step="0.1" value={draft.pausedQueue.scale} onChange={(event) => updatePausedQueue({ scale: Number(event.target.value) })} /></label>
+          </div>
+          <div className="overlay-control-group">
+            <h3>Колесо рандомайзера</h3>
+            <label>Масштаб: {draft.wheel.scale.toFixed(1)}<input type="range" min="0.4" max="1.6" step="0.1" value={draft.wheel.scale} onChange={(event) => updateWheel({ scale: Number(event.target.value) })} /></label>
+          </div>
         </div>
 
         <div className="overlay-settings-actions">

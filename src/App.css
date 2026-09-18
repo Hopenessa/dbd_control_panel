@@ -774,6 +774,21 @@ h1 {
   grid-template-columns: repeat(3, 1fr);
 }
 
+.overlay-control-group {
+  background: rgba(15, 23, 42, 0.58);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+}
+
+.overlay-control-group h3 {
+  color: var(--ink);
+  font-size: 15px;
+  margin: 0;
+}
+
 .overlay-controls label {
   color: var(--ink);
   display: grid;
