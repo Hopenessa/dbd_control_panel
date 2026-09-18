@@ -1,4 +1,4 @@
-import { DragEvent, FormEvent, useState } from 'react';
+import { DragEvent, FormEvent, useRef, useState } from 'react';
 import { useCharacterRosters } from '../../hooks/useCharacterRosters';
 import { useAppSocket } from '../../hooks/useAppSocket';
 import { useOverlayConfig } from '../../hooks/useOverlayConfig';
@@ -20,6 +20,7 @@ export function ControlPanel() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  const draggedIdRef = useRef<string | null>(null);
   const { rosters, updateRoster } = useCharacterRosters();
   const { config, saveConfig } = useOverlayConfig();
   const { sendMessage } = useAppSocket();
@@ -88,25 +89,32 @@ export function ControlPanel() {
   };
 
   const handleDragStart = (event: DragEvent<HTMLSpanElement>, id: string) => {
+    event.stopPropagation();
+    draggedIdRef.current = id;
     setDraggedId(id);
     event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.dropEffect = 'move';
     event.dataTransfer.setData('text/plain', id);
   };
 
   const handleDrop = (event: DragEvent<HTMLLIElement>, targetId: string) => {
     event.preventDefault();
-    const sourceId = draggedId || event.dataTransfer.getData('text/plain');
+    const sourceId = draggedIdRef.current || draggedId || event.dataTransfer.getData('text/plain');
     if (sourceId) {
       setQueue((currentQueue) => moveQueueItem(currentQueue, sourceId, targetId));
     }
+    draggedIdRef.current = null;
     setDraggedId(null);
   };
 
   const renderQueueItem = (item: QueueItem) => (
     <li
-      className={item.paused ? 'queue-card paused' : item.lowPriority ? 'queue-card low' : 'queue-card'}
+      className={`${item.paused ? 'queue-card paused' : item.lowPriority ? 'queue-card low' : 'queue-card'}${draggedId === item.id ? ' dragging' : ''}`}
       key={item.id}
-      onDragOver={(event) => event.preventDefault()}
+      onDragOver={(event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      }}
       onDrop={(event) => handleDrop(event, item.id)}
     >
       <span
@@ -115,7 +123,10 @@ export function ControlPanel() {
         title="Перетащить заказ"
         aria-label={`Перетащить ${item.title}`}
         onDragStart={(event) => handleDragStart(event, item.id)}
-        onDragEnd={() => setDraggedId(null)}
+        onDragEnd={() => {
+          draggedIdRef.current = null;
+          setDraggedId(null);
+        }}
       >
         ⋮⋮
       </span>

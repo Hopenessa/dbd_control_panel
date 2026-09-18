@@ -203,6 +203,11 @@ h1 {
   opacity: 0.52;
 }
 
+.queue-card.dragging {
+  border-color: var(--accent-hot);
+  opacity: 0.65;
+}
+
 .queue-card.low {
   opacity: 0.45;
 }
